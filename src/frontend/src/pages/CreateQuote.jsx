@@ -162,13 +162,13 @@ export default function CreateQuote() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold text-slate-900 mb-6">New Quote</h1>
+      <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-6">New Quote</h1>
 
-      <div className="bg-white rounded-xl border border-slate-200 p-8">
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-8">
         <StepBar current={step} />
 
         {error && (
-          <div className="mb-6 px-4 py-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg">
+          <div className="mb-6 px-4 py-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm rounded-lg">
             {error}
           </div>
         )}
@@ -176,38 +176,38 @@ export default function CreateQuote() {
         {/* ── Step 1: Customer Details ── */}
         {step === 1 && (
           <div className="space-y-4">
-            <h2 className="text-base font-semibold text-slate-800 mb-2">Customer Details</h2>
+            <h2 className="text-base font-semibold text-slate-800 dark:text-slate-200 mb-2">Customer Details</h2>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Full Name *</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Full Name *</label>
               <input
                 type="text"
                 value={customer.name}
                 onChange={e => setCustomer(p => ({ ...p, name: e.target.value }))}
                 placeholder="Jane Smith / Acme Ltd."
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email Address</label>
               <input
                 type="email"
                 value={customer.email}
                 onChange={e => setCustomer(p => ({ ...p, email: e.target.value }))}
                 placeholder="jane@example.com"
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
               />
-              <p className="text-xs text-slate-400 mt-1">Required to send via email</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Required to send via email</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Phone</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Phone</label>
               <input
                 type="tel"
                 value={customer.phone}
                 onChange={e => setCustomer(p => ({ ...p, phone: e.target.value }))}
                 placeholder="+353 1 234 5678"
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
               />
             </div>
 
@@ -226,15 +226,15 @@ export default function CreateQuote() {
         {/* ── Step 2: Line Items ── */}
         {step === 2 && (
           <div className="space-y-5">
-            <h2 className="text-base font-semibold text-slate-800">Line Items</h2>
+            <h2 className="text-base font-semibold text-slate-800 dark:text-slate-200">Line Items</h2>
 
             {/* Add from catalog */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Add from Catalog</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Add from Catalog</label>
               <select
                 onChange={addFromCatalog}
                 defaultValue=""
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
               >
                 <option value="">— Select a saved service —</option>
                 {services.map(s => (
@@ -246,8 +246,8 @@ export default function CreateQuote() {
             </div>
 
             {/* Add custom on-the-spot */}
-            <div className="border border-dashed border-slate-300 rounded-lg p-4 bg-slate-50">
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">
+            <div className="border border-dashed border-slate-300 dark:border-slate-600 rounded-lg p-4 bg-slate-50 dark:bg-slate-900/50">
+              <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">
                 Or add a one-off item
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
@@ -256,14 +256,14 @@ export default function CreateQuote() {
                   placeholder="Item name *"
                   value={customRow.item_name}
                   onChange={e => setCustomRow(p => ({ ...p, item_name: e.target.value }))}
-                  className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
                 />
                 <input
                   type="text"
                   placeholder="Description"
                   value={customRow.description}
                   onChange={e => setCustomRow(p => ({ ...p, description: e.target.value }))}
-                  className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
                 />
                 <input
                   type="number"
@@ -272,7 +272,7 @@ export default function CreateQuote() {
                   onChange={e => setCustomRow(p => ({ ...p, custom_price: e.target.value }))}
                   min="0"
                   step="0.01"
-                  className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
                 />
                 <input
                   type="number"
@@ -280,7 +280,7 @@ export default function CreateQuote() {
                   value={customRow.quantity}
                   onChange={e => setCustomRow(p => ({ ...p, quantity: e.target.value }))}
                   min="1"
-                  className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
                 />
               </div>
               <button
@@ -294,9 +294,9 @@ export default function CreateQuote() {
 
             {/* Current line items */}
             {lineItems.length > 0 && (
-              <div className="border border-slate-200 rounded-lg overflow-hidden">
+              <div className="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
                 <table className="w-full text-sm">
-                  <thead className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
+                  <thead className="bg-slate-50 dark:bg-slate-900/50 text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">
                     <tr>
                       <th className="text-left px-4 py-2">Item</th>
                       <th className="text-center px-2 py-2 w-20">Qty</th>
@@ -305,12 +305,12 @@ export default function CreateQuote() {
                       <th className="px-2 py-2 w-8"></th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                     {lineItems.map(it => (
-                      <tr key={it._id} className="bg-white">
+                      <tr key={it._id} className="bg-white dark:bg-slate-900">
                         <td className="px-4 py-2">
-                          <p className="font-medium text-slate-800">{it.item_name}</p>
-                          {it.description && <p className="text-xs text-slate-400">{it.description}</p>}
+                          <p className="font-medium text-slate-800 dark:text-slate-200">{it.item_name}</p>
+                          {it.description && <p className="text-xs text-slate-400 dark:text-slate-500">{it.description}</p>}
                         </td>
                         <td className="px-2 py-2 text-center">
                           <input
@@ -318,7 +318,7 @@ export default function CreateQuote() {
                             value={it.quantity}
                             onChange={e => updateItem(it._id, 'quantity', e.target.value)}
                             min="1"
-                            className="w-16 text-center px-1 py-1 border border-slate-200 rounded text-sm"
+                            className="w-16 text-center px-1 py-1 border border-slate-200 dark:border-slate-600 rounded text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
                           />
                         </td>
                         <td className="px-2 py-2 text-right">
@@ -328,16 +328,16 @@ export default function CreateQuote() {
                             onChange={e => updateItem(it._id, 'custom_price', e.target.value)}
                             min="0"
                             step="0.01"
-                            className="w-24 text-right px-1 py-1 border border-slate-200 rounded text-sm"
+                            className="w-24 text-right px-1 py-1 border border-slate-200 dark:border-slate-600 rounded text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
                           />
                         </td>
-                        <td className="px-2 py-2 text-right font-medium text-slate-800">
+                        <td className="px-2 py-2 text-right font-medium text-slate-800 dark:text-slate-200">
                           €{(Number(it.custom_price) * Number(it.quantity)).toFixed(2)}
                         </td>
                         <td className="px-2 py-2 text-center">
                           <button
                             onClick={() => removeItem(it._id)}
-                            className="text-slate-300 hover:text-red-500 transition-colors"
+                            className="text-slate-300 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 transition-colors"
                             title="Remove"
                           >
                             ×
@@ -347,14 +347,14 @@ export default function CreateQuote() {
                     ))}
                   </tbody>
                 </table>
-                <div className="px-4 py-3 bg-slate-50 border-t border-slate-200 text-right font-bold text-slate-900">
+                <div className="px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700 text-right font-bold text-slate-900 dark:text-slate-100">
                   Total: €{total.toFixed(2)}
                 </div>
               </div>
             )}
 
             <div className="flex justify-between pt-2">
-              <button onClick={() => setStep(1)} className="px-4 py-2 text-slate-600 border border-slate-300 rounded-lg hover:bg-slate-50 text-sm transition-colors">
+              <button onClick={() => setStep(1)} className="px-4 py-2 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 text-sm transition-colors">
                 ← Back
               </button>
               <button
@@ -371,26 +371,26 @@ export default function CreateQuote() {
         {/* ── Step 3: Preview & Send ── */}
         {step === 3 && (
           <div className="space-y-5">
-            <h2 className="text-base font-semibold text-slate-800">Preview & Send</h2>
+            <h2 className="text-base font-semibold text-slate-800 dark:text-slate-200">Preview & Send</h2>
 
             {sendResult && (
-              <div className={`px-4 py-3 rounded-lg text-sm ${sendResult.ok ? 'bg-green-50 border border-green-200 text-green-700' : 'bg-amber-50 border border-amber-200 text-amber-700'}`}>
+              <div className={`px-4 py-3 rounded-lg text-sm ${sendResult.ok ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400' : 'bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-400'}`}>
                 {sendResult.message}
               </div>
             )}
 
             {/* Customer summary */}
-            <div className="rounded-lg border border-slate-200 p-4">
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Customer</p>
-              <p className="font-medium text-slate-900">{customer.name}</p>
-              {customer.email && <p className="text-sm text-slate-600">{customer.email}</p>}
-              {customer.phone && <p className="text-sm text-slate-600">{customer.phone}</p>}
+            <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-4">
+              <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">Customer</p>
+              <p className="font-medium text-slate-900 dark:text-slate-100">{customer.name}</p>
+              {customer.email && <p className="text-sm text-slate-600 dark:text-slate-400">{customer.email}</p>}
+              {customer.phone && <p className="text-sm text-slate-600 dark:text-slate-400">{customer.phone}</p>}
             </div>
 
             {/* Line items summary */}
-            <div className="rounded-lg border border-slate-200 overflow-hidden">
+            <div className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
               <table className="w-full text-sm">
-                <thead className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
+                <thead className="bg-slate-50 dark:bg-slate-900/50 text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">
                   <tr>
                     <th className="text-left px-4 py-2">Item</th>
                     <th className="text-center px-2 py-2">Qty</th>
@@ -398,23 +398,23 @@ export default function CreateQuote() {
                     <th className="text-right px-4 py-2">Subtotal</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                   {lineItems.map(it => (
-                    <tr key={it._id} className="bg-white">
+                    <tr key={it._id} className="bg-white dark:bg-slate-900">
                       <td className="px-4 py-2">
-                        <p className="font-medium text-slate-800">{it.item_name}</p>
-                        {it.description && <p className="text-xs text-slate-400">{it.description}</p>}
+                        <p className="font-medium text-slate-800 dark:text-slate-200">{it.item_name}</p>
+                        {it.description && <p className="text-xs text-slate-400 dark:text-slate-500">{it.description}</p>}
                       </td>
-                      <td className="px-2 py-2 text-center text-slate-600">{it.quantity}</td>
-                      <td className="px-2 py-2 text-right text-slate-600">€{Number(it.custom_price).toFixed(2)}</td>
-                      <td className="px-4 py-2 text-right font-medium text-slate-800">
+                      <td className="px-2 py-2 text-center text-slate-600 dark:text-slate-400">{it.quantity}</td>
+                      <td className="px-2 py-2 text-right text-slate-600 dark:text-slate-400">€{Number(it.custom_price).toFixed(2)}</td>
+                      <td className="px-4 py-2 text-right font-medium text-slate-800 dark:text-slate-200">
                         €{(Number(it.custom_price) * Number(it.quantity)).toFixed(2)}
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-              <div className="px-4 py-3 bg-slate-50 border-t border-slate-200 text-right font-bold text-lg text-slate-900">
+              <div className="px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700 text-right font-bold text-lg text-slate-900 dark:text-slate-100">
                 Total: €{total.toFixed(2)}
               </div>
             </div>
@@ -422,7 +422,7 @@ export default function CreateQuote() {
             <div className="flex justify-between items-center pt-2 gap-3">
               <button
                 onClick={() => setStep(2)}
-                className="px-4 py-2 text-slate-600 border border-slate-300 rounded-lg hover:bg-slate-50 text-sm transition-colors"
+                className="px-4 py-2 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 text-sm transition-colors"
               >
                 ← Back
               </button>
@@ -430,7 +430,7 @@ export default function CreateQuote() {
                 <button
                   onClick={saveAsDraft}
                   disabled={saving || sending || !!sendResult?.ok}
-                  className="px-5 py-2 border border-slate-300 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 disabled:opacity-50 transition-colors"
+                  className="px-5 py-2 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-sm font-medium rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 transition-colors"
                 >
                   {saving ? 'Saving…' : 'Save as Draft'}
                 </button>

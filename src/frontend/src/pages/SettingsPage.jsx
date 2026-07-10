@@ -79,7 +79,7 @@ export default function SettingsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-24 text-slate-400 text-sm">
+      <div className="flex items-center justify-center py-24 text-slate-400 dark:text-slate-500 text-sm">
         Loading settings…
       </div>
     );
@@ -88,36 +88,36 @@ export default function SettingsPage() {
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">SMTP Configuration</h1>
-        <p className="text-sm text-slate-500 mt-0.5">
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">SMTP Configuration</h1>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
           Outbound email settings used to deliver proposals to customers
         </p>
       </div>
 
       {saved && (
-        <div className="px-4 py-3 bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg">
+        <div className="px-4 py-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 text-sm rounded-lg">
           ✓ Settings saved successfully.
         </div>
       )}
       {error && (
-        <div className="px-4 py-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg">
+        <div className="px-4 py-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm rounded-lg">
           {error}
         </div>
       )}
       {testResult && (
         <div className={`px-4 py-3 text-sm rounded-lg border ${
           testResult.ok
-            ? 'bg-green-50 border-green-200 text-green-700'
-            : 'bg-red-50 border-red-200 text-red-700'
+            ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-700 dark:text-green-400'
+            : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-700 dark:text-red-400'
         }`}>
           {testResult.ok ? '✓ ' : '✗ '}{testResult.message}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-6 space-y-5">
+      <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 space-y-5">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="sm:col-span-2">
-            <label className="block text-sm font-medium text-slate-700 mb-1">SMTP Host *</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">SMTP Host *</label>
             <input
               type="text"
               name="smtp_host"
@@ -125,11 +125,11 @@ export default function SettingsPage() {
               onChange={handleChange}
               placeholder="smtp.gmail.com"
               required
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Port *</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Port *</label>
             <input
               type="number"
               name="smtp_port"
@@ -137,14 +137,14 @@ export default function SettingsPage() {
               onChange={handleChange}
               placeholder="587"
               required
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
             />
-            <p className="text-xs text-slate-400 mt-1">587 = TLS, 465 = SSL</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">587 = TLS, 465 = SSL</p>
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">SMTP Username *</label>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">SMTP Username *</label>
           <input
             type="text"
             name="smtp_user"
@@ -152,37 +152,37 @@ export default function SettingsPage() {
             onChange={handleChange}
             placeholder="sender@yourdomain.com"
             required
-            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">SMTP Password</label>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">SMTP Password</label>
           <input
             type="password"
             name="smtp_password"
             value={form.smtp_password}
             onChange={handleChange}
             placeholder="Leave blank to keep existing password"
-            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
           />
-          <p className="text-xs text-slate-400 mt-1">Stored encrypted (AES-256-CBC)</p>
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Stored encrypted (AES-256-CBC)</p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">From Name</label>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">From Name</label>
           <input
             type="text"
             name="from_name"
             value={form.from_name}
             onChange={handleChange}
             placeholder="Your Company Name"
-            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
           />
-          <p className="text-xs text-slate-400 mt-1">Displayed as the sender name in the customer's inbox</p>
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Displayed as the sender name in the customer's inbox</p>
         </div>
 
-        <div className="flex gap-3 pt-2 border-t border-slate-100">
+        <div className="flex gap-3 pt-2 border-t border-slate-100 dark:border-slate-700">
           <button
             type="submit"
             disabled={saving}
@@ -194,7 +194,7 @@ export default function SettingsPage() {
             type="button"
             onClick={testConnection}
             disabled={testing || !form.smtp_host || !form.smtp_user}
-            className="px-6 py-2 border border-slate-300 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 disabled:opacity-50 transition-colors"
+            className="px-6 py-2 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-sm font-medium rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 transition-colors"
           >
             {testing ? 'Testing…' : 'Test Connection'}
           </button>
