@@ -25,7 +25,7 @@ export default function ProposalFeedback() {
       const res = await fetch(`/api/proposal/${hash}/feedback`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ feedback_text: feedbackText.trim() })
+        body: JSON.stringify({ feedback: feedbackText.trim() })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Submission failed');
