@@ -1,0 +1,32 @@
+{
+  "name": "omniquote",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node src/server.js",
+    "dev:frontend": "npm run dev --prefix src/frontend",
+    "dev:all": "concurrently \"npm run dev\" \"npm run dev:frontend\"",
+    "build": "echo 'Build not required for this setup'",
+    "lint": "eslint src/**/*.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "axios": "^1.7.2",
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^6.9.13",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^6.0.1"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.3",
+    "eslint": "^9.31.0",
+    "typescript": "^5.7.2"
+  },
+  "allowScripts": {
+    "sqlite3@6.0.1": true
+  }
+}
