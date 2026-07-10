@@ -15,12 +15,8 @@ export async function attachTenantDB(req, res, next) {
   }
 }
 
-// Close tenant connection on response finish
+// Note: Connection cleanup is handled by idle timeout in tenant.js
+// Do not close here to avoid race conditions with concurrent requests
 export function cleanupTenant(req, res, next) {
-  if (req.db) {
-    res.on('finish', () => {
-      closeTenantConnection(req.user?.tenant_id);
-    });
-  }
   next();
 }
