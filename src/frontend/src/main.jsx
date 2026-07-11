@@ -12,6 +12,7 @@ import SettingsPage from './pages/SettingsPage.jsx';
 import ProposalPage from './pages/ProposalPage.jsx';
 import ProposalFeedback from './pages/ProposalFeedback.jsx';
 import ProposalAction from './pages/ProposalAction.jsx';
+import ProposalAdmin from './pages/ProposalAdmin.jsx';
 import './index.css';
 
 /** Redirects unauthenticated visitors to /login. */
@@ -46,6 +47,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <Route path="create-quote" element={<CreateQuote />} />
             <Route path="catalog"      element={<CatalogPage />} />
             <Route path="settings"     element={<SettingsPage />} />
+            <Route path="proposals/:id/admin" element={<ProposalAdmin />} />
           </Route>
 
           {/* ── Fallback ── */}

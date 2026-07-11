@@ -36,6 +36,7 @@ export default function Dashboard() {
   const [proposals, setProposals] = useState([]);
   const [loading, setLoading]     = useState(true);
   const [error, setError]         = useState('');
+  const [expandedNotes, setExpandedNotes] = useState(null); // proposal id being expanded
 
   useEffect(() => {
     fetch('/api/proposal', { headers: { Authorization: `Bearer ${token}` } })
@@ -153,19 +154,22 @@ export default function Dashboard() {
                   </td>
                   <td className="px-6 py-3">
                     {p.status === 'Revision Requested' ? (
-                      <div className="group relative">
-                        <div className="max-w-xs cursor-help">
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 dark:bg-amber-900/50 text-amber-900 dark:text-amber-300">
-                            Has Notes
-                          </span>
-                        </div>
-                        <div className="absolute left-0 mt-1 hidden group-hover:block z-10 w-72 p-3 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                          <p className="text-xs font-semibold text-amber-900 dark:text-amber-300 mb-1 uppercase tracking-wide">Client Notes:</p>
-                          <p className="text-sm text-amber-900 dark:text-amber-200">{getRevisionNotes(p.feedback) || 'No feedback notes provided.'}</p>
-                        </div>
+                      <div>
+                        <button
+                          onClick={() => setExpandedNotes(expandedNotes === p.id ? null : p.id)}
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 dark:bg-amber-900/50 text-amber-900 dark:text-amber-300 hover:bg-amber-200 dark:hover:bg-amber-900/70 transition-colors"
+                        >
+                          {expandedNotes === p.id ? '▼' : '▶'} Revision Notes
+                        </button>
+                        {expandedNotes === p.id && (
+                          <div className="mt-2 p-3 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded-lg max-w-xs">
+                            <p className="text-xs font-semibold text-amber-900 dark:text-amber-300 mb-1 uppercase tracking-wide">Client Notes:</p>
+                            <p className="text-sm text-amber-900 dark:text-amber-200 leading-relaxed">
+                              {getRevisionNotes(p.feedback) || 'No feedback notes provided.'}
+                            </p>
+                          </div>
+                        )}
                       </div>
-                    ) : p.status === 'Denied' ? (
-                      <span className="text-xs text-slate-400 dark:text-slate-500 italic">—</span>
                     ) : (
                       <span className="text-xs text-slate-400 dark:text-slate-500 italic">—</span>
                     )}
@@ -174,14 +178,22 @@ export default function Dashboard() {
                   <td className="px-6 py-3">
                     <div className="flex items-center gap-3">
                       {p.hash_token && (
-                        <a
-                          href={`/proposal/${p.hash_token}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 dark:text-blue-400 hover:underline"
-                        >
-                          View
-                        </a>
+                        <>
+                          <a
+                            href={`/proposal/${p.hash_token}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 dark:text-blue-400 hover:underline"
+                          >
+                            View
+                          </a>
+                          <a
+                            href={`/proposals/${p.id}/admin`}
+                            className="text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 text-xs"
+                          >
+                            Admin
+                          </a>
+                        </>
                       )}
                       <button
                         onClick={() => handleDelete(p.id)}
