@@ -18,6 +18,18 @@ function fmt(dateStr) {
   });
 }
 
+function getRevisionNotes(feedbackStr) {
+  if (!feedbackStr) return null;
+  try {
+    const history = JSON.parse(feedbackStr);
+    if (!Array.isArray(history) || history.length === 0) return null;
+    const lastEntry = history[history.length - 1];
+    return lastEntry?.text || null;
+  } catch {
+    return null;
+  }
+}
+
 export default function Dashboard() {
   const { token, user } = useAuth();
   const navigate        = useNavigate();
@@ -119,6 +131,7 @@ export default function Dashboard() {
                 <th className="text-left px-6 py-3">Email</th>
                 <th className="text-right px-6 py-3">Value</th>
                 <th className="text-left px-6 py-3">Status</th>
+                <th className="text-left px-6 py-3">Revision Notes</th>
                 <th className="text-left px-6 py-3">Created</th>
                 <th className="text-left px-6 py-3">Actions</th>
               </tr>
@@ -137,6 +150,25 @@ export default function Dashboard() {
                     <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_STYLES[p.status] || STATUS_STYLES['Draft']}`}>
                       {p.status}
                     </span>
+                  </td>
+                  <td className="px-6 py-3">
+                    {p.status === 'Revision Requested' ? (
+                      <div className="group relative">
+                        <div className="max-w-xs cursor-help">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 dark:bg-amber-900/50 text-amber-900 dark:text-amber-300">
+                            Has Notes
+                          </span>
+                        </div>
+                        <div className="absolute left-0 mt-1 hidden group-hover:block z-10 w-72 p-3 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                          <p className="text-xs font-semibold text-amber-900 dark:text-amber-300 mb-1 uppercase tracking-wide">Client Notes:</p>
+                          <p className="text-sm text-amber-900 dark:text-amber-200">{getRevisionNotes(p.feedback) || 'No feedback notes provided.'}</p>
+                        </div>
+                      </div>
+                    ) : p.status === 'Denied' ? (
+                      <span className="text-xs text-slate-400 dark:text-slate-500 italic">—</span>
+                    ) : (
+                      <span className="text-xs text-slate-400 dark:text-slate-500 italic">—</span>
+                    )}
                   </td>
                   <td className="px-6 py-3 text-slate-500 dark:text-slate-400">{fmt(p.created_at)}</td>
                   <td className="px-6 py-3">
