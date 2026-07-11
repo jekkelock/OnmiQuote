@@ -2,8 +2,8 @@
 // Public lifecycle routes (no auth) + protected CRUD routes (auth required).
 //
 // Public mount points (server.js):
-//   app.use('/api/proposal', proposalRoutes)
-//   app.use('/proposal',     proposalRoutes)   ← for email-link clicks
+//   app.use('/api/proposals', proposalRoutes)
+//   app.use('/proposal',       proposalRoutes)   ← for email-link clicks
 //
 // Proposal status lifecycle:
 //   Draft → Sent → Viewed → Accepted | Denied | Revision Requested
@@ -250,7 +250,7 @@ protectedRouter.use(authenticate);
 protectedRouter.use(attachTenantDB);
 protectedRouter.use(cleanupTenant);
 
-// GET /api/proposal  — list all proposals for the tenant
+// GET /api/proposals  — list all proposals for the tenant
 protectedRouter.get('/', async (req, res) => {
   try {
     const proposals = await req.db.all(
@@ -263,8 +263,8 @@ protectedRouter.get('/', async (req, res) => {
   }
 });
 
-// GET /api/proposal/:id  — fetch single proposal by numeric ID (tenant-scoped)
-protectedRouter.get('/:id(\\d+)', async (req, res) => {
+// GET /api/proposals/:id  — fetch single proposal by numeric ID (tenant-scoped)
+protectedRouter.get('/:id(\d+)', async (req, res) => {
   try {
     const proposalId = parseInt(req.params.id, 10);
     const proposal = await req.db.get(
@@ -278,8 +278,8 @@ protectedRouter.get('/:id(\\d+)', async (req, res) => {
   }
 });
 
-// POST /api/proposal/:id/accept  — admin accept by numeric ID
-protectedRouter.post('/:id(\\d+)/accept', async (req, res) => {
+// POST /api/proposals/:id/accept  — admin accept by numeric ID
+protectedRouter.post('/:id(\d+)/accept', async (req, res) => {
   try {
     const proposalId = parseInt(req.params.id, 10);
     await req.db.run('UPDATE proposals SET status = ? WHERE id = ?', ['Accepted', proposalId]);
@@ -291,8 +291,8 @@ protectedRouter.post('/:id(\\d+)/accept', async (req, res) => {
   }
 });
 
-// POST /api/proposal/:id/deny  — admin deny by numeric ID
-protectedRouter.post('/:id(\\d+)/deny', async (req, res) => {
+// POST /api/proposals/:id/deny  — admin deny by numeric ID
+protectedRouter.post('/:id(\d+)/deny', async (req, res) => {
   try {
     const proposalId = parseInt(req.params.id, 10);
     await req.db.run('UPDATE proposals SET status = ? WHERE id = ?', ['Denied', proposalId]);
@@ -304,7 +304,7 @@ protectedRouter.post('/:id(\\d+)/deny', async (req, res) => {
   }
 });
 
-// POST /api/proposal  — create a new Draft proposal
+// POST /api/proposals  — create a new Draft proposal
 protectedRouter.post('/', async (req, res) => {
   try {
     const { customer_name, customer_email, customer_phone, line_items, total } = req.body;
@@ -334,16 +334,16 @@ protectedRouter.post('/', async (req, res) => {
   }
 });
 
-// POST /api/proposal/:id/send  — mark as Sent and email the customer
+// POST /api/proposals/:id/send  — mark as Sent and email the customer
 //
 // On email failure: status is rolled back to Draft and 502 is returned.
 // req._transporterFactory can be injected by tests to avoid real SMTP.
-protectedRouter.post('/:id(\\d+)/send', async (req, res) => {
+protectedRouter.post('/:id(\d+)/send', async (req, res) => {
   try {
-    const { id } = req.params;
+    const proposalId = parseInt(req.params.id, 10);
 
     const proposal = await req.db.get(
-      'SELECT * FROM proposals WHERE id = ?', [id]
+      'SELECT * FROM proposals WHERE id = ?', [proposalId]
     );
 
     if (!proposal) return res.status(404).json({ error: 'Proposal not found' });
@@ -359,8 +359,8 @@ protectedRouter.post('/:id(\\d+)/send', async (req, res) => {
     }
 
     // Promote to Sent before attempting delivery.
-    await req.db.run('UPDATE proposals SET status = ? WHERE id = ?', ['Sent', id]);
-    const updated = await req.db.get('SELECT * FROM proposals WHERE id = ?', [id]);
+    await req.db.run('UPDATE proposals SET status = ? WHERE id = ?', ['Sent', proposalId]);
+    const updated = await req.db.get('SELECT * FROM proposals WHERE id = ?', [proposalId]);
 
     try {
       // Pass an optional transporter factory override (used by integration tests).
@@ -371,17 +371,17 @@ protectedRouter.post('/:id(\\d+)/send', async (req, res) => {
     } catch (emailErr) {
       console.error('[proposal] email send error:', emailErr.message);
 
-      // Best-effort rollback: customer never received the email, so revert to Draft.
-      // The rollback is guarded independently — a rollback failure must not mask
-      // the original email error or leave the caller without a response.
-      let rollbackNote = '';
-      try {
-        await req.db.run('UPDATE proposals SET status = ? WHERE id = ?', ['Draft', id]);
-      } catch (rollbackErr) {
-        // Status is stuck as Sent even though email failed — requires manual intervention.
-        console.error('[proposal] CRITICAL: rollback to Draft failed after email error:', rollbackErr.message);
-        rollbackNote = ' WARNING: status rollback also failed — proposal may be stuck as Sent.';
-      }
+// Best-effort rollback: customer never received the email, so revert to Draft.
+       // The rollback is guarded independently — a rollback failure must not mask
+       // the original email error or leave the caller without a response.
+       let rollbackNote = '';
+       try {
+         await req.db.run('UPDATE proposals SET status = ? WHERE id = ?', ['Draft', proposalId]);
+       } catch (rollbackErr) {
+         // Status is stuck as Sent even though email failed — requires manual intervention.
+         console.error('[proposal] CRITICAL: rollback to Draft failed after email error:', rollbackErr.message);
+         rollbackNote = ' WARNING: status rollback also failed — proposal may be stuck as Sent.';
+       }
 
       return res.status(502).json({
         error: `Email delivery failed: ${emailErr.message}. Proposal status rolled back to Draft.${rollbackNote}`
@@ -395,11 +395,12 @@ protectedRouter.post('/:id(\\d+)/send', async (req, res) => {
   }
 });
 
-// DELETE /api/proposal/:id  — remove a proposal
-protectedRouter.delete('/:id(\\d+)', async (req, res) => {
+// DELETE /api/proposals/:id  — remove a proposal
+protectedRouter.delete('/:id(\d+)', async (req, res) => {
   try {
+    const proposalId = parseInt(req.params.id, 10);
     const result = await req.db.run(
-      'DELETE FROM proposals WHERE id = ?', [req.params.id]
+      'DELETE FROM proposals WHERE id = ?', [proposalId]
     );
     if (result.changes === 0) return res.status(404).json({ error: 'Proposal not found' });
     res.json({ message: 'Proposal deleted' });
