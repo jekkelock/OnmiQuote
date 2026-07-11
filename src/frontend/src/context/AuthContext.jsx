@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 
 const AuthContext = createContext(null);
 
@@ -20,19 +20,21 @@ export function AuthProvider({ children }) {
     }
   }, [token]);
 
-  const login = (newToken) => {
+  const login = useCallback((newToken) => {
     setToken(newToken);
     localStorage.setItem('jwt_token', newToken);
-  };
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     setToken(null);
     setUser(null);
     localStorage.removeItem('jwt_token');
-  };
+  }, []);
+
+  const value = useMemo(() => ({ token, user, login, logout }), [token, user, login, logout]);
 
   return (
-    <AuthContext.Provider value={{ token, user, login, logout }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

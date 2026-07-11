@@ -1,0 +1,172 @@
+{
+  "src/config/auth.js": {
+    "mtime": 1783600964.0,
+    "ast_hash": "5dec5d688870c9567c6eb427d72d561d",
+    "semantic_hash": ""
+  },
+  "src/config/db.js": {
+    "mtime": 1783682175.4007375,
+    "ast_hash": "90f9aa0ce61a82daae6060eca0a22e62",
+    "semantic_hash": ""
+  },
+  "src/config/tenant.js": {
+    "mtime": 1783600974.0,
+    "ast_hash": "bcf528e2d68e677607400038ff95df78",
+    "semantic_hash": ""
+  },
+  "src/frontend/package.json": {
+    "mtime": 1783609328.0,
+    "ast_hash": "2b72a80d6d7843cf7b138229d718d6ab",
+    "semantic_hash": ""
+  },
+  "src/frontend/postcss.config.js": {
+    "mtime": 1783603418.0,
+    "ast_hash": "49826fd81914632ba3a62a448c5bf51c",
+    "semantic_hash": ""
+  },
+  "src/frontend/src/App.jsx": {
+    "mtime": 1783724848.9984436,
+    "ast_hash": "380e3e6b60ce5e87a3c6b5a2deb174af",
+    "semantic_hash": ""
+  },
+  "src/frontend/src/components/MarkdownRenderer.jsx": {
+    "mtime": 1783609316.0,
+    "ast_hash": "2591a4ac736991aa55ab417d7e19f636",
+    "semantic_hash": ""
+  },
+  "src/frontend/src/components/Sidebar.jsx": {
+    "mtime": 1783724894.1628935,
+    "ast_hash": "8e32519c6666e51cc878d92d3a5957fb",
+    "semantic_hash": ""
+  },
+  "src/frontend/src/components/ThemeToggle.jsx": {
+    "mtime": 1783724841.007482,
+    "ast_hash": "ed39ea1d4821147ec8d5d92810749dab",
+    "semantic_hash": ""
+  },
+  "src/frontend/src/context/AuthContext.jsx": {
+    "mtime": 1783783167.9533503,
+    "ast_hash": "1360e534eb26d1322a52615dc6fde32e",
+    "semantic_hash": ""
+  },
+  "src/frontend/src/context/ThemeContext.jsx": {
+    "mtime": 1783724798.8793478,
+    "ast_hash": "3d494ae2ecdd878b52a04de92b09caa2",
+    "semantic_hash": ""
+  },
+  "src/frontend/src/main.jsx": {
+    "mtime": 1783753515.9891229,
+    "ast_hash": "7e767a346b52289881f38dc7b5229687",
+    "semantic_hash": ""
+  },
+  "src/frontend/src/pages/AuthPage.jsx": {
+    "mtime": 1783669078.0,
+    "ast_hash": "d81938d7e62ddc420589a310ff3326dd",
+    "semantic_hash": ""
+  },
+  "src/frontend/src/pages/CatalogPage.jsx": {
+    "mtime": 1783725082.9689007,
+    "ast_hash": "d8d6e2540355cfd3a5b8144f02bdc90e",
+    "semantic_hash": ""
+  },
+  "src/frontend/src/pages/CreateQuote.jsx": {
+    "mtime": 1783780016.825095,
+    "ast_hash": "4dfcdb2ec076c9b08a3438b9d3e23316",
+    "semantic_hash": ""
+  },
+  "src/frontend/src/pages/Dashboard.jsx": {
+    "mtime": 1783780016.8260942,
+    "ast_hash": "28eeea2f0a5cfde2b5a8d38e2e6e2267",
+    "semantic_hash": ""
+  },
+  "src/frontend/src/pages/ProposalAction.jsx": {
+    "mtime": 1783779504.5675247,
+    "ast_hash": "7486f13164e53460666c1afa61b464ea",
+    "semantic_hash": ""
+  },
+  "src/frontend/src/pages/ProposalAdmin.jsx": {
+    "mtime": 1783780016.8270936,
+    "ast_hash": "08c8301a5f9aaf2b2312c70f6c452177",
+    "semantic_hash": ""
+  },
+  "src/frontend/src/pages/ProposalFeedback.jsx": {
+    "mtime": 1783779504.5710535,
+    "ast_hash": "2b53a697a1f366016372e5069cea9797",
+    "semantic_hash": ""
+  },
+  "src/frontend/src/pages/ProposalPage.jsx": {
+    "mtime": 1783779504.5814617,
+    "ast_hash": "70bc609a381852cf6d9d6d8c49c652dd",
+    "semantic_hash": ""
+  },
+  "src/frontend/src/pages/SettingsPage.jsx": {
+    "mtime": 1783725135.990711,
+    "ast_hash": "679e592bba3b374eb0bce271d7cfa57e",
+    "semantic_hash": ""
+  },
+  "src/frontend/tailwind.config.js": {
+    "mtime": 1783725367.6649425,
+    "ast_hash": "3f056324dc4bcfe2b80e08959adae5cb",
+    "semantic_hash": ""
+  },
+  "src/frontend/vite.config.js": {
+    "mtime": 1783672669.2970238,
+    "ast_hash": "2471ef6b7b3e880a5ee3a19b92cc872d",
+    "semantic_hash": ""
+  },
+  "src/middleware/auth.js": {
+    "mtime": 1783601330.0,
+    "ast_hash": "02219393c8be3574998c16038aed1f39",
+    "semantic_hash": ""
+  },
+  "src/middleware/tenant.js": {
+    "mtime": 1783718318.286141,
+    "ast_hash": "16371b3a1a582520dfc6a68062276b00",
+    "semantic_hash": ""
+  },
+  "src/routes/auth.js": {
+    "mtime": 1783601436.0,
+    "ast_hash": "d7621fb18702bcd2365eb3c17ae1ff84",
+    "semantic_hash": ""
+  },
+  "src/routes/catalog.js": {
+    "mtime": 1783611464.0,
+    "ast_hash": "52f5b4254f4dcbdd10bee79258f2c3c7",
+    "semantic_hash": ""
+  },
+  "src/routes/proposal.js": {
+    "mtime": 1783780016.8280933,
+    "ast_hash": "de0952e7521b54eec52d8540e99cbad2",
+    "semantic_hash": ""
+  },
+  "src/routes/settings.js": {
+    "mtime": 1783623676.0,
+    "ast_hash": "1b2d99d0d02d889a42a6da0aa2586bfa",
+    "semantic_hash": ""
+  },
+  "src/routes/tenant.js": {
+    "mtime": 1783611564.0,
+    "ast_hash": "b6e07e70fb6c1d4f16bea13c50bf6197",
+    "semantic_hash": ""
+  },
+  "src/server.js": {
+    "mtime": 1783780016.8290994,
+    "ast_hash": "7badaaa23bb08be3340761336dc7555a",
+    "semantic_hash": ""
+  },
+  "src/services/email.js": {
+    "mtime": 1783668573.0,
+    "ast_hash": "2a0541de7e5aecaff85e4d45be07b07a",
+    "semantic_hash": ""
+  },
+  "src/utils/crypto.js": {
+    "mtime": 1783623165.0,
+    "ast_hash": "04901ff473df2914f04833fad75b78c5",
+    "semantic_hash": ""
+  },
+  "src/frontend/index.html": {
+    "mtime": 1783781804.4513252,
+    "ast_hash": "3f4195f97e526071475ce3b293567547",
+    "semantic_hash": ""
+  }
+}
