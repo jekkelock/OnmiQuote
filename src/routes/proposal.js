@@ -245,13 +245,8 @@ function confirmationPage(title, color, heading, hash) {
 
 // ── Protected routes (JWT required) ──────────────────────────────────────────
 
-const protectedRouter = express.Router();
-protectedRouter.use(authenticate);
-protectedRouter.use(attachTenantDB);
-protectedRouter.use(cleanupTenant);
-
 // GET /api/proposals  — list all proposals for the tenant
-protectedRouter.get('/', async (req, res) => {
+router.get('/', authenticate, attachTenantDB, cleanupTenant, async (req, res) => {
   try {
     const proposals = await req.db.all(
       'SELECT * FROM proposals ORDER BY created_at DESC'
@@ -264,7 +259,7 @@ protectedRouter.get('/', async (req, res) => {
 });
 
 // GET /api/proposals/:id  — fetch single proposal by numeric ID (tenant-scoped)
-protectedRouter.get('/:id(\d+)', async (req, res) => {
+router.get('/:id(\\d+)', authenticate, attachTenantDB, cleanupTenant, async (req, res) => {
   try {
     const proposalId = parseInt(req.params.id, 10);
     const proposal = await req.db.get(
@@ -279,7 +274,7 @@ protectedRouter.get('/:id(\d+)', async (req, res) => {
 });
 
 // POST /api/proposals/:id/accept  — admin accept by numeric ID
-protectedRouter.post('/:id(\d+)/accept', async (req, res) => {
+router.post('/:id(\\d+)/accept', authenticate, attachTenantDB, cleanupTenant, async (req, res) => {
   try {
     const proposalId = parseInt(req.params.id, 10);
     await req.db.run('UPDATE proposals SET status = ? WHERE id = ?', ['Accepted', proposalId]);
@@ -292,7 +287,7 @@ protectedRouter.post('/:id(\d+)/accept', async (req, res) => {
 });
 
 // POST /api/proposals/:id/deny  — admin deny by numeric ID
-protectedRouter.post('/:id(\d+)/deny', async (req, res) => {
+router.post('/:id(\\d+)/deny', authenticate, attachTenantDB, cleanupTenant, async (req, res) => {
   try {
     const proposalId = parseInt(req.params.id, 10);
     await req.db.run('UPDATE proposals SET status = ? WHERE id = ?', ['Denied', proposalId]);
@@ -305,7 +300,7 @@ protectedRouter.post('/:id(\d+)/deny', async (req, res) => {
 });
 
 // POST /api/proposals  — create a new Draft proposal
-protectedRouter.post('/', async (req, res) => {
+router.post('/', authenticate, attachTenantDB, cleanupTenant, async (req, res) => {
   try {
     const { customer_name, customer_email, customer_phone, line_items, total } = req.body;
 
@@ -338,7 +333,7 @@ protectedRouter.post('/', async (req, res) => {
 //
 // On email failure: status is rolled back to Draft and 502 is returned.
 // req._transporterFactory can be injected by tests to avoid real SMTP.
-protectedRouter.post('/:id(\d+)/send', async (req, res) => {
+router.post('/:id(\\d+)/send', authenticate, attachTenantDB, cleanupTenant, async (req, res) => {
   try {
     const proposalId = parseInt(req.params.id, 10);
 
@@ -371,17 +366,17 @@ protectedRouter.post('/:id(\d+)/send', async (req, res) => {
     } catch (emailErr) {
       console.error('[proposal] email send error:', emailErr.message);
 
-// Best-effort rollback: customer never received the email, so revert to Draft.
-       // The rollback is guarded independently — a rollback failure must not mask
-       // the original email error or leave the caller without a response.
-       let rollbackNote = '';
-       try {
-         await req.db.run('UPDATE proposals SET status = ? WHERE id = ?', ['Draft', proposalId]);
-       } catch (rollbackErr) {
-         // Status is stuck as Sent even though email failed — requires manual intervention.
-         console.error('[proposal] CRITICAL: rollback to Draft failed after email error:', rollbackErr.message);
-         rollbackNote = ' WARNING: status rollback also failed — proposal may be stuck as Sent.';
-       }
+      // Best-effort rollback: customer never received the email, so revert to Draft.
+      // The rollback is guarded independently — a rollback failure must not mask
+      // the original email error or leave the caller without a response.
+      let rollbackNote = '';
+      try {
+        await req.db.run('UPDATE proposals SET status = ? WHERE id = ?', ['Draft', proposalId]);
+      } catch (rollbackErr) {
+        // Status is stuck as Sent even though email failed — requires manual intervention.
+        console.error('[proposal] CRITICAL: rollback to Draft failed after email error:', rollbackErr.message);
+        rollbackNote = ' WARNING: status rollback also failed — proposal may be stuck as Sent.';
+      }
 
       return res.status(502).json({
         error: `Email delivery failed: ${emailErr.message}. Proposal status rolled back to Draft.${rollbackNote}`
@@ -396,7 +391,7 @@ protectedRouter.post('/:id(\d+)/send', async (req, res) => {
 });
 
 // DELETE /api/proposals/:id  — remove a proposal
-protectedRouter.delete('/:id(\d+)', async (req, res) => {
+router.delete('/:id(\\d+)', authenticate, attachTenantDB, cleanupTenant, async (req, res) => {
   try {
     const proposalId = parseInt(req.params.id, 10);
     const result = await req.db.run(
@@ -409,8 +404,5 @@ protectedRouter.delete('/:id(\d+)', async (req, res) => {
     res.status(500).json({ error: 'Failed to delete proposal' });
   }
 });
-
-// Mount protected router on the same base (protected routes must come first to match numeric IDs)
-router.use(protectedRouter);
 
 export default router;
