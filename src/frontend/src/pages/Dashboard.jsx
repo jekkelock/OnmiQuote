@@ -39,7 +39,7 @@ export default function Dashboard() {
   const [expandedNotes, setExpandedNotes] = useState(null); // proposal id being expanded
 
   useEffect(() => {
-    fetch('/api/proposal', { headers: { Authorization: `Bearer ${token}` } })
+    fetch('/api/proposals', { headers: { Authorization: `Bearer ${token}` } })
       .then(r => r.json())
       .then(data => { setProposals(data.proposals || []); setLoading(false); })
       .catch(() => { setError('Failed to load proposals.'); setLoading(false); });
@@ -52,7 +52,7 @@ export default function Dashboard() {
 
   const handleDelete = async (id) => {
     if (!confirm('Delete this proposal?')) return;
-    await fetch(`/api/proposal/${id}`, {
+    await fetch(`/api/proposals/${id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` }
     });

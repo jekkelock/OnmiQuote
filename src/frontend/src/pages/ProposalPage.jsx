@@ -21,7 +21,7 @@ export default function ProposalPage() {
   const [actionErr, setActionErr] = useState('');
 
   useEffect(() => {
-    fetch(`/api/proposal/${hash}`)
+    fetch(`/api/proposals/${hash}`)
       .then(r => { if (!r.ok) throw new Error('Not found'); return r.json(); })
       .then(data => { setProposal(data.proposal); setLoading(false); })
       .catch(() => { setError('Proposal not found or link has expired.'); setLoading(false); });
@@ -30,7 +30,7 @@ export default function ProposalPage() {
   const doAction = async (action) => {
     setActionErr('');
     try {
-      const res = await fetch(`/api/proposal/${hash}/${action}`, { method: 'POST' });
+      const res = await fetch(`/api/proposals/${hash}/${action}`, { method: 'POST' });
       if (!res.ok) {
         const d = await res.json().catch(() => ({}));
         throw new Error(d.error || `Failed to ${action} proposal`);

@@ -43,9 +43,9 @@ export default function ProposalAdmin() {
       setLoading(false);
       return;
     }
-    fetch(`/api/proposal/${id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+fetch(`/api/proposals/${id}`, {
+       headers: { Authorization: `Bearer ${token}` }
+     })
       .then(r => {
         if (!r.ok) {
           return r.json().then(d => { throw new Error(d.error || 'Proposal not found'); });
@@ -62,7 +62,7 @@ export default function ProposalAdmin() {
 
   const handleAction = async (action) => {
     try {
-      const res = await fetch(`/api/proposal/${id}/${action}`, {
+      const res = await fetch(`/api/proposals/${id}/${action}`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` }
       });

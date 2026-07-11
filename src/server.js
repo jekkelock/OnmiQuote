@@ -27,7 +27,7 @@ app.get('/api/health', async (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/tenant', tenantRoutes);
-app.use('/api/proposal', proposalRoutes);
+app.use('/api/proposals', proposalRoutes);
 app.use('/api/catalog', catalogRoutes);
 app.use('/api/settings', settingsRoutes);
 

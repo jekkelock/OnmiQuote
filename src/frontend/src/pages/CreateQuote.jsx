@@ -108,7 +108,7 @@ export default function CreateQuote() {
   const saveAsDraft = async () => {
     setSaving(true); setError('');
     try {
-      const res  = await fetch('/api/proposal', {
+      const res  = await fetch('/api/proposals', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(buildPayload())
@@ -127,7 +127,7 @@ export default function CreateQuote() {
     setSending(true); setError(''); setSendResult(null);
     try {
       // Step A: create draft
-      const createRes  = await fetch('/api/proposal', {
+      const createRes  = await fetch('/api/proposals', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(buildPayload())
@@ -138,7 +138,7 @@ export default function CreateQuote() {
       const proposalId = createData.proposal.id;
 
       // Step B: send
-      const sendRes  = await fetch(`/api/proposal/${proposalId}/send`, {
+      const sendRes  = await fetch(`/api/proposals/${proposalId}/send`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` }
       });

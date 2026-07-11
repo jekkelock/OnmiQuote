@@ -88,7 +88,8 @@ async function withProposalDB(hashToken, fn) {
 
 // GET /api/proposal/:hash_token  (also reachable at /proposal/:hash_token)
 // Crucial: auto-promotes status Draft|Sent → Viewed before serving.
-router.get('/:hash_token', async (req, res) => {
+// Uses regex to avoid matching numeric IDs (handled by protected routes)
+router.get('/:hash_token([a-f0-9]{32})', async (req, res) => {
   try {
     const hash    = req.params.hash_token;
     let   payload = null;
@@ -115,7 +116,7 @@ router.get('/:hash_token', async (req, res) => {
 });
 
 // POST /api/proposal/:hash_token/accept
-router.post('/:hash_token/accept', async (req, res) => {
+router.post('/:hash_token([a-f0-9]{32})/accept', async (req, res) => {
   try {
     const hash  = req.params.hash_token;
     const found = await withProposalDB(hash, async (db) => {
@@ -133,7 +134,7 @@ router.post('/:hash_token/accept', async (req, res) => {
 });
 
 // POST /api/proposal/:hash_token/deny
-router.post('/:hash_token/deny', async (req, res) => {
+router.post('/:hash_token([a-f0-9]{32})/deny', async (req, res) => {
   try {
     const hash  = req.params.hash_token;
     const found = await withProposalDB(hash, async (db) => {
@@ -153,7 +154,7 @@ router.post('/:hash_token/deny', async (req, res) => {
 // POST /api/proposal/:hash_token/feedback
 // Body: { feedback: string }   (customer negotiation notes)
 // Sets status → 'Revision Requested' and appends to the feedback column.
-router.post('/:hash_token/feedback', async (req, res) => {
+router.post('/:hash_token([a-f0-9]{32})/feedback', async (req, res) => {
   try {
     const { feedback } = req.body;
 
@@ -182,7 +183,7 @@ router.post('/:hash_token/feedback', async (req, res) => {
 });
 
 // GET /:hash_token/accept  ── email-link click → renders a simple HTML page
-router.get('/:hash_token/accept', async (req, res) => {
+router.get('/:hash_token([a-f0-9]{32})/accept', async (req, res) => {
   const hash = req.params.hash_token;
   try {
     const found = await withProposalDB(hash, async (db) => {
@@ -202,7 +203,7 @@ router.get('/:hash_token/accept', async (req, res) => {
 });
 
 // GET /:hash_token/deny  ── email-link click → renders a simple HTML page
-router.get('/:hash_token/deny', async (req, res) => {
+router.get('/:hash_token([a-f0-9]{32})/deny', async (req, res) => {
   const hash = req.params.hash_token;
   try {
     const found = await withProposalDB(hash, async (db) => {
@@ -408,7 +409,7 @@ protectedRouter.delete('/:id(\\d+)', async (req, res) => {
   }
 });
 
-// Mount protected router on the same base (public routes registered first take priority)
+// Mount protected router on the same base (protected routes must come first to match numeric IDs)
 router.use(protectedRouter);
 
 export default router;
