@@ -2,8 +2,8 @@
 // Public lifecycle routes (no auth) + protected CRUD routes (auth required).
 //
 // Public mount points (server.js):
-//   app.use('/api/proposals', proposalRoutes)
-//   app.use('/proposal',       proposalRoutes)   ← for email-link clicks
+//   app.use('/api/proposal', proposalRoutes)
+//   app.use('/proposal',     proposalRoutes)   ← for email-link clicks
 //
 // Proposal status lifecycle:
 //   Draft → Sent → Viewed → Accepted | Denied | Revision Requested
@@ -270,32 +270,6 @@ router.get('/:id(\\d+)', authenticate, attachTenantDB, cleanupTenant, async (req
   } catch (err) {
     console.error('[proposal] get error:', err);
     res.status(500).json({ error: 'Failed to fetch proposal' });
-  }
-});
-
-// POST /api/proposals/:id/accept  — admin accept by numeric ID
-router.post('/:id(\\d+)/accept', authenticate, attachTenantDB, cleanupTenant, async (req, res) => {
-  try {
-    const proposalId = parseInt(req.params.id, 10);
-    await req.db.run('UPDATE proposals SET status = ? WHERE id = ?', ['Accepted', proposalId]);
-    const updated = await req.db.get('SELECT * FROM proposals WHERE id = ?', [proposalId]);
-    res.json({ message: 'Proposal accepted', status: 'Accepted', proposal: updated });
-  } catch (err) {
-    console.error('[proposal] admin accept error:', err);
-    res.status(500).json({ error: 'Failed to accept proposal' });
-  }
-});
-
-// POST /api/proposals/:id/deny  — admin deny by numeric ID
-router.post('/:id(\\d+)/deny', authenticate, attachTenantDB, cleanupTenant, async (req, res) => {
-  try {
-    const proposalId = parseInt(req.params.id, 10);
-    await req.db.run('UPDATE proposals SET status = ? WHERE id = ?', ['Denied', proposalId]);
-    const updated = await req.db.get('SELECT * FROM proposals WHERE id = ?', [proposalId]);
-    res.json({ message: 'Proposal denied', status: 'Denied', proposal: updated });
-  } catch (err) {
-    console.error('[proposal] admin deny error:', err);
-    res.status(500).json({ error: 'Failed to deny proposal' });
   }
 });
 

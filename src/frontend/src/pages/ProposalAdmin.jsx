@@ -37,15 +37,15 @@ export default function ProposalAdmin() {
   const [error, setError] = useState('');
   const [actionMsg, setActionMsg] = useState('');
 
-  useEffect(() => {
+useEffect(() => {
     if (!token) {
       setError('Authentication required.');
       setLoading(false);
       return;
     }
-fetch(`/api/proposals/${id}`, {
-       headers: { Authorization: `Bearer ${token}` }
-     })
+    fetch(`/api/proposals/${id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
       .then(r => {
         if (!r.ok) {
           return r.json().then(d => { throw new Error(d.error || 'Proposal not found'); });
@@ -69,11 +69,7 @@ fetch(`/api/proposals/${id}`, {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Action failed');
       setActionMsg(`${action === 'accept' ? 'Accepted' : 'Denied'} successfully.`);
-      if (data.proposal) {
-        setProposal(data.proposal);
-      } else {
-        setProposal(prev => ({ ...prev, status: action === 'accept' ? 'Accepted' : 'Denied' }));
-      }
+      setProposal(prev => ({ ...prev, status: action === 'accept' ? 'Accepted' : 'Denied' }));
     } catch (err) {
       setError(err.message);
     }

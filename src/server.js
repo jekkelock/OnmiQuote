@@ -28,6 +28,8 @@ app.get('/api/health', async (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/tenant', tenantRoutes);
 app.use('/api/proposals', proposalRoutes);
+// Keep /api/proposal for backward compatibility with public hash_token routes
+app.use('/api/proposal', proposalRoutes);
 app.use('/api/catalog', catalogRoutes);
 app.use('/api/settings', settingsRoutes);
 

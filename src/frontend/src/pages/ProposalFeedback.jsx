@@ -11,7 +11,7 @@ export default function ProposalFeedback() {
   const [error, setError]             = useState('');
 
   useEffect(() => {
-    fetch(`/api/proposals/${hash}`)
+    fetch(`/api/proposal/${hash}`)
       .then(r => { if (!r.ok) throw new Error(); return r.json(); })
       .then(data => { setProposal(data.proposal); setLoading(false); })
       .catch(() => { setError('Proposal not found.'); setLoading(false); });
@@ -22,7 +22,7 @@ export default function ProposalFeedback() {
     if (!feedbackText.trim()) return;
     setError(''); setSubmitting(true);
     try {
-      const res = await fetch(`/api/proposals/${hash}/feedback`, {
+      const res = await fetch(`/api/proposal/${hash}/feedback`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ feedback: feedbackText.trim() })

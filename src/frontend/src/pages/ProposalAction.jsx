@@ -8,7 +8,7 @@ export default function ProposalAction() {
   useEffect(() => {
     const processAction = async () => {
       try {
-        const response = await fetch(`/api/proposals/${hash}/${action}`, {
+        const response = await fetch(`/api/proposal/${hash}/${action}`, {
           method: 'POST'
         });
         
