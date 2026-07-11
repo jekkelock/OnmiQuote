@@ -265,8 +265,9 @@ protectedRouter.get('/', async (req, res) => {
 // GET /api/proposal/:id  — fetch single proposal by numeric ID (tenant-scoped)
 protectedRouter.get('/:id(\\d+)', async (req, res) => {
   try {
+    const proposalId = parseInt(req.params.id, 10);
     const proposal = await req.db.get(
-      'SELECT * FROM proposals WHERE id = ?', [req.params.id]
+      'SELECT * FROM proposals WHERE id = ?', [proposalId]
     );
     if (!proposal) return res.status(404).json({ error: 'Proposal not found' });
     res.json({ proposal });
@@ -279,9 +280,9 @@ protectedRouter.get('/:id(\\d+)', async (req, res) => {
 // POST /api/proposal/:id/accept  — admin accept by numeric ID
 protectedRouter.post('/:id(\\d+)/accept', async (req, res) => {
   try {
-    const { id } = req.params;
-    await req.db.run('UPDATE proposals SET status = ? WHERE id = ?', ['Accepted', id]);
-    const updated = await req.db.get('SELECT * FROM proposals WHERE id = ?', [id]);
+    const proposalId = parseInt(req.params.id, 10);
+    await req.db.run('UPDATE proposals SET status = ? WHERE id = ?', ['Accepted', proposalId]);
+    const updated = await req.db.get('SELECT * FROM proposals WHERE id = ?', [proposalId]);
     res.json({ message: 'Proposal accepted', status: 'Accepted', proposal: updated });
   } catch (err) {
     console.error('[proposal] admin accept error:', err);
@@ -292,9 +293,9 @@ protectedRouter.post('/:id(\\d+)/accept', async (req, res) => {
 // POST /api/proposal/:id/deny  — admin deny by numeric ID
 protectedRouter.post('/:id(\\d+)/deny', async (req, res) => {
   try {
-    const { id } = req.params;
-    await req.db.run('UPDATE proposals SET status = ? WHERE id = ?', ['Denied', id]);
-    const updated = await req.db.get('SELECT * FROM proposals WHERE id = ?', [id]);
+    const proposalId = parseInt(req.params.id, 10);
+    await req.db.run('UPDATE proposals SET status = ? WHERE id = ?', ['Denied', proposalId]);
+    const updated = await req.db.get('SELECT * FROM proposals WHERE id = ?', [proposalId]);
     res.json({ message: 'Proposal denied', status: 'Denied', proposal: updated });
   } catch (err) {
     console.error('[proposal] admin deny error:', err);
