@@ -38,12 +38,26 @@ export default function ProposalAdmin() {
   const [actionMsg, setActionMsg] = useState('');
 
   useEffect(() => {
+    if (!token) {
+      setError('Authentication required.');
+      setLoading(false);
+      return;
+    }
     fetch(`/api/proposal/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
-      .then(r => r.json())
-      .then(data => { setProposal(data.proposal); setLoading(false); })
-      .catch(() => { setError('Proposal not found.'); setLoading(false); });
+      .then(r => {
+        if (!r.ok) {
+          return r.json().then(d => { throw new Error(d.error || 'Proposal not found'); });
+        }
+        return r.json();
+      })
+      .then(data => {
+        if (!data.proposal) throw new Error('No proposal data returned');
+        setProposal(data.proposal);
+        setLoading(false);
+      })
+      .catch((err) => { setError(err.message || 'Failed to load proposal'); setLoading(false); });
   }, [id, token]);
 
   const handleAction = async (action) => {
