@@ -69,7 +69,11 @@ export default function ProposalAdmin() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Action failed');
       setActionMsg(`${action === 'accept' ? 'Accepted' : 'Denied'} successfully.`);
-      setProposal(prev => ({ ...prev, status: action === 'accept' ? 'Accepted' : 'Denied' }));
+      if (data.proposal) {
+        setProposal(data.proposal);
+      } else {
+        setProposal(prev => ({ ...prev, status: action === 'accept' ? 'Accepted' : 'Denied' }));
+      }
     } catch (err) {
       setError(err.message);
     }

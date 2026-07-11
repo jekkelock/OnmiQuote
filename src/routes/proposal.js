@@ -276,6 +276,32 @@ protectedRouter.get('/:id(\\d+)', async (req, res) => {
   }
 });
 
+// POST /api/proposal/:id/accept  — admin accept by numeric ID
+protectedRouter.post('/:id(\\d+)/accept', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await req.db.run('UPDATE proposals SET status = ? WHERE id = ?', ['Accepted', id]);
+    const updated = await req.db.get('SELECT * FROM proposals WHERE id = ?', [id]);
+    res.json({ message: 'Proposal accepted', status: 'Accepted', proposal: updated });
+  } catch (err) {
+    console.error('[proposal] admin accept error:', err);
+    res.status(500).json({ error: 'Failed to accept proposal' });
+  }
+});
+
+// POST /api/proposal/:id/deny  — admin deny by numeric ID
+protectedRouter.post('/:id(\\d+)/deny', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await req.db.run('UPDATE proposals SET status = ? WHERE id = ?', ['Denied', id]);
+    const updated = await req.db.get('SELECT * FROM proposals WHERE id = ?', [id]);
+    res.json({ message: 'Proposal denied', status: 'Denied', proposal: updated });
+  } catch (err) {
+    console.error('[proposal] admin deny error:', err);
+    res.status(500).json({ error: 'Failed to deny proposal' });
+  }
+});
+
 // POST /api/proposal  — create a new Draft proposal
 protectedRouter.post('/', async (req, res) => {
   try {
