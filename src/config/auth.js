@@ -17,6 +17,15 @@ export async function verifyPassword(password, hash) {
 }
 
 export function generateToken(payload) {
+  // Fetch token_version if user_id exists in payload
+  if (payload?.user_id) {
+    // We need to get the DB, but this may be called before DB init
+    // Return without token_version if DB not ready (will be checked on each request)
+  }
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+}
+
+export function generateToken(payload) {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 }
 

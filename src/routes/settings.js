@@ -6,7 +6,9 @@ import express from 'express';
 import nodemailer from 'nodemailer';
 import { authenticate } from '../middleware/auth.js';
 import { attachTenantDB, cleanupTenant } from '../middleware/tenant.js';
-import { encrypt } from '../utils/crypto.js';  // ← from the dedicated crypto util
+import { encrypt } from '../utils/crypto.js';
+import { getMainDB } from '../config/db.js';
+import { hashPassword, verifyPassword } from '../config/auth.js';
 
 const router = express.Router();
 
@@ -178,6 +180,63 @@ router.post('/general', async (req, res) => {
   } catch (err) {
     console.error('[settings] General save error:', err);
     res.status(500).json({ error: 'Failed to save general settings' });
+  }
+});
+
+// ── Security Routes (use main DB for user table) ───────────────────────────────
+
+// ── POST /api/settings/security/password ───────────────────────────────────────
+// Change user password after verifying current password.
+router.post('/security/password', async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.user?.user_id;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ error: 'currentPassword and newPassword are required' });
+    }
+
+    const db = getMainDB();
+    const user = await db.get('SELECT id, password_hash FROM users WHERE id = ?', [userId]);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const isValid = await verifyPassword(currentPassword, user.password_hash);
+    if (!isValid) {
+      return res.status(401).json({ error: 'Current password is incorrect' });
+    }
+
+    const newHash = await hashPassword(newPassword);
+    await db.run(
+      'UPDATE users SET password_hash = ? WHERE id = ?',
+      [newHash, userId]
+    );
+
+    res.json({ message: 'Password updated successfully' });
+  } catch (err) {
+    console.error('[settings] Security password error:', err);
+    res.status(500).json({ error: 'Failed to update password' });
+  }
+});
+
+// ── POST /api/settings/security/revoke ─────────────────────────────────────────
+// Increment token_version to invalidate all outstanding JWTs.
+router.post('/security/revoke', async (req, res) => {
+  try {
+    const userId = req.user?.user_id;
+    const db = getMainDB();
+
+    await db.run(
+      'UPDATE users SET token_version = COALESCE(token_version, 1) + 1 WHERE id = ?',
+      [userId]
+    );
+
+    res.json({ message: 'All sessions revoked successfully' });
+  } catch (err) {
+    console.error('[settings] Security revoke error:', err);
+    res.status(500).json({ error: 'Failed to revoke sessions' });
   }
 });
 

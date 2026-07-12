@@ -26,15 +26,30 @@ export async function initMainDB() {
     driver: Database
   });
 
+  // Safe migration helper for main DB
+  const safeMainAlter = async (sql) => {
+    try {
+      await mainDb.run(sql);
+    } catch (err) {
+      if (!err.message?.includes('duplicate column name')) {
+        console.error(`[db] Main migration error (${sql}):`, err.message);
+      }
+    }
+  };
+
   // Users – one account per tenant user
   await mainDb.run(`
     CREATE TABLE IF NOT EXISTS users (
       id            INTEGER PRIMARY KEY AUTOINCREMENT,
       username      TEXT    UNIQUE NOT NULL,
       password_hash TEXT    NOT NULL,
-      tenant_id     TEXT
+      tenant_id     TEXT,
+      token_version INTEGER DEFAULT 1
     )
   `);
+
+  // Add token_version to existing users (migration)
+  await safeMainAlter('ALTER TABLE users ADD COLUMN token_version INTEGER DEFAULT 1');
 
   // Tenants – each row represents an isolated business account
   await mainDb.run(`
@@ -64,11 +79,11 @@ export function getMainDB() {
  * Open (and provision) an isolated SQLite database for a specific tenant.
  * The file is created at data/tenants/tenant_[tenantId].db.
  *
-* Tables created on first access:
-   *   • email_settings  – SMTP configuration (password stored AES-256-CBC encrypted)
-   *   • services        – the tenant's service/product catalog
-   *   • proposals       – B2B quote records with lifecycle status
-   *   • templates       – business terms and disclaimers
+ * Tables created on first access:
+ *   • email_settings  – SMTP configuration (password stored AES-256-CBC encrypted)
+ *   • services        – the tenant's service/product catalog
+ *   • proposals       – B2B quote records with lifecycle status
+ *   • templates       – business terms and disclaimers
  *
  * @param {string|number} tenantId
  * @returns {Promise<object>} The opened SQLite database handle.
@@ -118,7 +133,7 @@ export async function getTenantDB(tenantId) {
       base_price  REAL    NOT NULL,
       unit_type   TEXT    NOT NULL
     )
-`);
+  `);
 
   // ── proposals ───────────────────────────────────────────────────────────────
   // Each row is a B2B quote sent (or drafted) for a customer.
