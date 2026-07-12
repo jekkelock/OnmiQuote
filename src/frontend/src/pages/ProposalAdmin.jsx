@@ -69,7 +69,7 @@ useEffect(() => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Action failed');
       const isAccept = action === 'accept';
-      setActionMsg({ text: isAccept ? 'Accepted successfully.' : 'Denied.', accept: isAccept });
+      setActionMsg({ text: isAccept ? 'Accepted successfully.' : 'Denied successfuly.', accept: isAccept });
       setProposal(prev => ({ ...prev, status: action === 'accept' ? 'Accepted' : 'Denied' }));
     } catch (err) {
       setError(err.message);
@@ -224,7 +224,7 @@ useEffect(() => {
         </div>
       </div>
 
-{actionMsg?.text && (
+      {actionMsg?.text && (
         <p className="text-xs text-slate-400 dark:text-slate-500 text-center">Ref #{proposal.hash_token?.slice(0, 8).toUpperCase()}</p>
       )}
     </div>
