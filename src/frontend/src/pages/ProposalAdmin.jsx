@@ -35,7 +35,7 @@ export default function ProposalAdmin() {
   const [proposal, setProposal] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [actionMsg, setActionMsg] = useState('');
+  const [actionMsg, setActionMsg] = useState(null);
 
 useEffect(() => {
     if (!token) {
@@ -68,7 +68,8 @@ useEffect(() => {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Action failed');
-      setActionMsg(`${action === 'accept' ? 'Accepted' : 'Denied'} successfully.`);
+      const isAccept = action === 'accept';
+      setActionMsg({ text: isAccept ? 'Accepted successfully.' : 'Denied successfuly.', accept: isAccept });
       setProposal(prev => ({ ...prev, status: action === 'accept' ? 'Accepted' : 'Denied' }));
     } catch (err) {
       setError(err.message);
@@ -189,37 +190,41 @@ useEffect(() => {
         </div>
       </div>
 
-      {/* Admin Actions - only for Draft/Sent status */}
-      {proposal.status !== 'Accepted' && proposal.status !== 'Denied' && (
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5">
-          <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">
-            Administrative Actions
+{/* Admin Actions - accept/deny always available */}
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5">
+        <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">
+          Administrative Actions
+        </p>
+        {actionMsg && (
+          <p className={`text-sm mb-3 ${actionMsg.accept ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+            {actionMsg.text}
           </p>
-          {actionMsg && <p className="text-green-600 dark:text-green-400 text-sm mb-3">{actionMsg}</p>}
-          <div className="flex gap-3">
+        )}
+        <div className="flex gap-3">
+          {(proposal.status === 'Draft' || proposal.status === 'Revision Requested') && (
             <button
               onClick={() => navigate(`/create-quote?edit=${id}`)}
               className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
             >
               Edit Draft
             </button>
-            <button
-              onClick={() => handleAction('accept')}
-              className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
-            >
-              Mark Accepted
-            </button>
-            <button
-              onClick={() => handleAction('deny')}
-              className="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors"
-            >
-              Mark Denied
-            </button>
-          </div>
+          )}
+          <button
+            onClick={() => handleAction('accept')}
+            className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+          >
+            Mark Accepted
+          </button>
+          <button
+            onClick={() => handleAction('deny')}
+            className="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors"
+          >
+            Mark Denied
+          </button>
         </div>
-      )}
+      </div>
 
-      {actionMsg && (
+      {actionMsg?.text && (
         <p className="text-xs text-slate-400 dark:text-slate-500 text-center">Ref #{proposal.hash_token?.slice(0, 8).toUpperCase()}</p>
       )}
     </div>

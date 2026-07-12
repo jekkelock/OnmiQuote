@@ -178,22 +178,12 @@ export default function Dashboard() {
                   <td className="px-6 py-3">
                     <div className="flex items-center gap-3">
                       {p.hash_token && (
-                        <>
-                          <a
-                            href={`/proposal/${p.hash_token}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 dark:text-blue-400 hover:underline"
-                          >
-                            View
-                          </a>
-                          <a
-                            href={`/proposals/${p.id}/admin`}
-                            className="text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 text-xs"
-                          >
-                            Admin
-                          </a>
-                        </>
+                        <a
+                          href={`/proposals/${p.id}/admin`}
+                          className="text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 text-xs"
+                        >
+                          Manage
+                        </a>
                       )}
                       <button
                         onClick={() => handleDelete(p.id)}
