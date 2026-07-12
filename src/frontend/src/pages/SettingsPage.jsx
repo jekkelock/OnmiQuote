@@ -42,7 +42,7 @@ export default function SettingsPage() {
   // Load SMTP settings on mount
   useEffect(() => {
     fetch('/api/settings/smtp', { headers: { Authorization: `Bearer ${token}` } })
-      .then(r => r.json())
+      .then(r => r.json().catch(() => ({})))
       .then(data => {
         if (data.settings) {
           setSmtpForm({ ...SMTP_BLANK, ...data.settings, smtp_password: '' });
@@ -55,7 +55,7 @@ export default function SettingsPage() {
   // Load General settings on mount
   useEffect(() => {
     fetch('/api/settings/general', { headers: { Authorization: `Bearer ${token}` } })
-      .then(r => r.json())
+      .then(r => r.json().catch(() => ({})))
       .then(data => {
         if (data.settings) {
           setGeneralForm(data.settings);
@@ -90,7 +90,12 @@ export default function SettingsPage() {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(smtpForm)
       });
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        throw new Error('Server returned invalid response. Please try again.');
+      }
       if (!res.ok) throw new Error(data.error || 'Failed to save SMTP settings');
       setSmtpSaved(true);
       setSmtpForm(prev => ({ ...prev, smtp_password: '' }));
@@ -110,7 +115,12 @@ export default function SettingsPage() {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(generalForm)
       });
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        throw new Error('Server returned invalid response. Please try again.');
+      }
       if (!res.ok) throw new Error(data.error || 'Failed to save general settings');
       setGeneralSaved(true);
     } catch (err) {
@@ -128,7 +138,12 @@ export default function SettingsPage() {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(smtpForm)
       });
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        throw new Error('Server returned invalid response. Please try again.');
+      }
       setSmtpTestResult({
         ok: res.ok,
         message: res.ok
