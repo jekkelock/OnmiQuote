@@ -189,35 +189,35 @@ useEffect(() => {
         </div>
       </div>
 
-      {/* Admin Actions - only for Draft/Sent status */}
-      {proposal.status !== 'Accepted' && proposal.status !== 'Denied' && (
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5">
-          <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">
-            Administrative Actions
-          </p>
-          {actionMsg && <p className="text-green-600 dark:text-green-400 text-sm mb-3">{actionMsg}</p>}
-          <div className="flex gap-3">
+{/* Admin Actions - accept/deny always available */}
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5">
+        <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">
+          Administrative Actions
+        </p>
+        {actionMsg && <p className="text-green-600 dark:text-green-400 text-sm mb-3">{actionMsg}</p>}
+        <div className="flex gap-3">
+          {(proposal.status === 'Draft' || proposal.status === 'Revision Requested') && (
             <button
               onClick={() => navigate(`/create-quote?edit=${id}`)}
               className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
             >
               Edit Draft
             </button>
-            <button
-              onClick={() => handleAction('accept')}
-              className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
-            >
-              Mark Accepted
-            </button>
-            <button
-              onClick={() => handleAction('deny')}
-              className="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors"
-            >
-              Mark Denied
-            </button>
-          </div>
+          )}
+          <button
+            onClick={() => handleAction('accept')}
+            className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+          >
+            Mark Accepted
+          </button>
+          <button
+            onClick={() => handleAction('deny')}
+            className="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors"
+          >
+            Mark Denied
+          </button>
         </div>
-      )}
+      </div>
 
       {actionMsg && (
         <p className="text-xs text-slate-400 dark:text-slate-500 text-center">Ref #{proposal.hash_token?.slice(0, 8).toUpperCase()}</p>
