@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 
 const UNIT_TYPES = ['hour', 'day', 'item', 'service', 'm²', 'kg'];
@@ -40,6 +40,7 @@ function StepBar({ current }) {
 export default function CreateQuote() {
   const { token }  = useAuth();
   const navigate   = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const [step, setStep]       = useState(1);
   const [services, setServices] = useState([]);
@@ -49,8 +50,10 @@ export default function CreateQuote() {
 
   const [saving, setSaving]   = useState(false);
   const [sending, setSending] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError]     = useState('');
   const [sendResult, setSendResult] = useState(null); // { ok, message }
+  const [editProposalId, setEditProposalId] = useState(null);
 
   useEffect(() => {
     fetch('/api/catalog/services', { headers: { Authorization: `Bearer ${token}` } })
@@ -58,6 +61,35 @@ export default function CreateQuote() {
       .then(d => setServices(d.services || []))
       .catch(() => {});
   }, [token]);
+
+  useEffect(() => {
+    const editId = searchParams.get('edit');
+    if (editId && token) {
+      setEditProposalId(parseInt(editId, 10));
+      setLoading(true);
+      fetch(`/api/proposals/${editId}`, { headers: { Authorization: `Bearer ${token}` } })
+        .then(r => r.json())
+        .then(d => {
+          if (d.proposal) {
+            const prop = d.proposal;
+            setCustomer({
+              name:  prop.customer_name  || '',
+              email: prop.customer_email || '',
+              phone: prop.customer_phone || ''
+            });
+            setLineItems((prop.line_items || []).map((it, idx) => ({
+              _id:         Date.now() + idx,
+              item_name:   it.item_name,
+              description: it.description || '',
+              custom_price: Number(it.custom_price),
+              quantity:    Number(it.quantity)
+            })));
+          }
+        })
+        .catch(() => {})
+        .finally(() => setLoading(false));
+    }
+  }, [searchParams, token]);
 
   /* ── Line item helpers ── */
 
@@ -108,8 +140,10 @@ export default function CreateQuote() {
   const saveAsDraft = async () => {
     setSaving(true); setError('');
     try {
-      const res  = await fetch('/api/proposals', {
-        method: 'POST',
+      const url = editProposalId ? `/api/proposals/${editProposalId}` : '/api/proposals';
+      const method = editProposalId ? 'PUT' : 'POST';
+      const res  = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(buildPayload())
       });
@@ -126,18 +160,27 @@ export default function CreateQuote() {
     if (!customer.email) { setError('Customer email is required to send via email.'); return; }
     setSending(true); setError(''); setSendResult(null);
     try {
-      // Step A: create draft
-      const createRes  = await fetch('/api/proposals', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify(buildPayload())
-      });
-      const createData = await createRes.json();
-      if (!createRes.ok) throw new Error(createData.error || 'Failed to create proposal');
+      let proposalId;
+      if (editProposalId) {
+        const updateRes  = await fetch(`/api/proposals/${editProposalId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify(buildPayload())
+        });
+        const updateData = await updateRes.json();
+        if (!updateRes.ok) throw new Error(updateData.error || 'Failed to update proposal');
+        proposalId = editProposalId;
+      } else {
+        const createRes  = await fetch('/api/proposals', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify(buildPayload())
+        });
+        const createData = await createRes.json();
+        if (!createRes.ok) throw new Error(createData.error || 'Failed to create proposal');
+        proposalId = createData.proposal.id;
+      }
 
-      const proposalId = createData.proposal.id;
-
-      // Step B: send
       const sendRes  = await fetch(`/api/proposals/${proposalId}/send`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` }
@@ -148,7 +191,6 @@ export default function CreateQuote() {
         setSendResult({ ok: true, message: `Proposal sent to ${customer.email}!` });
         setTimeout(() => navigate('/dashboard'), 2000);
       } else {
-        // Proposal saved as Draft but email failed
         setSendResult({ ok: false, message: sendData.error || 'Email delivery failed. Proposal saved as Draft.' });
         setSending(false);
       }
@@ -162,7 +204,15 @@ export default function CreateQuote() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-6">New Quote</h1>
+      <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-6">
+        {editProposalId ? 'Edit Quote' : 'New Quote'}
+      </h1>
+
+      {loading && (
+        <div className="mb-6 px-4 py-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 text-sm rounded-lg">
+          Loading proposal data…
+        </div>
+      )}
 
       <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-8">
         <StepBar current={step} />

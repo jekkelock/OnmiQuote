@@ -379,4 +379,82 @@ router.delete('/:id(\\d+)', authenticate, attachTenantDB, cleanupTenant, async (
   }
 });
 
+// PUT /api/proposals/:id  — update an existing Draft or Revision Requested proposal
+router.put('/:id(\\d+)', authenticate, attachTenantDB, cleanupTenant, async (req, res) => {
+  try {
+    const proposalId = parseInt(req.params.id, 10);
+    const { customer_name, customer_email, customer_phone, line_items, total } = req.body;
+
+    if (!line_items || total === undefined) {
+      return res.status(400).json({ error: 'line_items and total are required' });
+    }
+
+    const proposal = await req.db.get(
+      'SELECT * FROM proposals WHERE id = ?', [proposalId]
+    );
+
+    if (!proposal) return res.status(404).json({ error: 'Proposal not found' });
+
+    if (proposal.status !== 'Draft' && proposal.status !== 'Revision Requested') {
+      return res.status(409).json({
+        error: `Cannot update a proposal with status '${proposal.status}'. Only Draft or Revision Requested proposals can be edited.`
+      });
+    }
+
+    await req.db.run(
+      `UPDATE proposals SET
+         customer_name  = ?,
+         customer_email = ?,
+         customer_phone = ?,
+         line_items     = ?,
+         total          = ?
+       WHERE id = ?`,
+      [customer_name ?? null, customer_email ?? null, customer_phone ?? null,
+       JSON.stringify(line_items), Number(total), proposalId]
+    );
+
+    const updated = await req.db.get('SELECT * FROM proposals WHERE id = ?', [proposalId]);
+    res.json({ proposal: updated });
+  } catch (err) {
+    console.error('[proposal] update error:', err);
+    res.status(500).json({ error: 'Failed to update proposal' });
+  }
+});
+
+// POST /api/proposals/:id/accept  — admin endpoint for numeric ID
+router.post('/:id(\\d+)/accept', authenticate, attachTenantDB, cleanupTenant, async (req, res) => {
+  try {
+    const proposalId = parseInt(req.params.id, 10);
+    const proposal = await req.db.get('SELECT * FROM proposals WHERE id = ?', [proposalId]);
+
+    if (!proposal) return res.status(404).json({ error: 'Proposal not found' });
+
+    await req.db.run('UPDATE proposals SET status = ? WHERE id = ?', ['Accepted', proposalId]);
+    const updated = await req.db.get('SELECT * FROM proposals WHERE id = ?', [proposalId]);
+
+    res.json({ success: true, status: 'Accepted', proposal: updated });
+  } catch (err) {
+    console.error('[proposal] admin accept error:', err);
+    res.status(500).json({ error: 'Failed to accept proposal' });
+  }
+});
+
+// POST /api/proposals/:id/deny  — admin endpoint for numeric ID
+router.post('/:id(\\d+)/deny', authenticate, attachTenantDB, cleanupTenant, async (req, res) => {
+  try {
+    const proposalId = parseInt(req.params.id, 10);
+    const proposal = await req.db.get('SELECT * FROM proposals WHERE id = ?', [proposalId]);
+
+    if (!proposal) return res.status(404).json({ error: 'Proposal not found' });
+
+    await req.db.run('UPDATE proposals SET status = ? WHERE id = ?', ['Denied', proposalId]);
+    const updated = await req.db.get('SELECT * FROM proposals WHERE id = ?', [proposalId]);
+
+    res.json({ success: true, status: 'Denied', proposal: updated });
+  } catch (err) {
+    console.error('[proposal] admin deny error:', err);
+    res.status(500).json({ error: 'Failed to deny proposal' });
+  }
+});
+
 export default router;
