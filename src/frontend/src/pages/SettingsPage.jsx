@@ -20,7 +20,7 @@ const TABS = [
 ];
 
 export default function SettingsPage() {
-  const { token }  = useAuth();
+  const { token, logout }  = useAuth();
   const [activeTab, setActiveTab] = useState('general');
 
   // SMTP state
@@ -38,6 +38,12 @@ export default function SettingsPage() {
   const [generalSaving, setGeneralSaving] = useState(false);
   const [generalSaved, setGeneralSaved] = useState(false);
   const [generalError, setGeneralError] = useState('');
+  const SECURITY_BLANK = { currentPassword: '', newPassword: '', confirmPassword: '' };
+  const [securityForm, setSecurityForm] = useState(SECURITY_BLANK);
+  const [securitySubmitting, setSecuritySubmitting] = useState(false);
+  const [revokeLoading, setRevokeLoading] = useState(false);
+  const [securitySaved, setSecuritySaved] = useState(false);
+  const [securityError, setSecurityError] = useState('');
 
   // Load SMTP settings on mount
   useEffect(() => {
