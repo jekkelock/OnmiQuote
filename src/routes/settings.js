@@ -122,4 +122,63 @@ router.post('/smtp/test', async (req, res) => {
   }
 });
 
+// ── GET /api/settings/general ───────────────────────────────────────────────
+// Returns the tenant's company profile settings.
+router.get('/general', async (req, res) => {
+  try {
+    const settings = await req.db.get(
+      'SELECT * FROM settings_general WHERE id = 1 LIMIT 1'
+    );
+
+    const defaults = {
+      company_name: '',
+      company_email: '',
+      company_phone: '',
+      company_address: '',
+      currency: 'EUR',
+      primary_color: '#3B82F6',
+      logo_url: ''
+    };
+
+    res.json({ settings: settings || defaults });
+  } catch (err) {
+    console.error('[settings] General fetch error:', err);
+    res.status(500).json({ error: 'Failed to fetch general settings' });
+  }
+});
+
+// ── POST /api/settings/general ──────────────────────────────────────────────
+// Upserts the tenant's company profile settings.
+router.post('/general', async (req, res) => {
+  try {
+    const { company_name, company_email, company_phone, company_address, currency, primary_color, logo_url } = req.body;
+
+    const existing = await req.db.get('SELECT id FROM settings_general WHERE id = 1 LIMIT 1');
+
+    if (existing) {
+      await req.db.run(
+        `UPDATE settings_general
+            SET company_name = ?, company_email = ?, company_phone = ?,
+                company_address = ?, currency = ?, primary_color = ?, logo_url = ?,
+                updated_at = CURRENT_TIMESTAMP
+          WHERE id = 1`,
+        [company_name, company_email, company_phone, company_address, currency, primary_color, logo_url]
+      );
+    } else {
+      await req.db.run(
+        `INSERT INTO settings_general
+           (id, company_name, company_email, company_phone, company_address, currency, primary_color, logo_url)
+         VALUES (1, ?, ?, ?, ?, ?, ?, ?)`,
+        [company_name, company_email, company_phone, company_address, currency, primary_color, logo_url]
+      );
+    }
+
+    const settings = await req.db.get('SELECT * FROM settings_general WHERE id = 1 LIMIT 1');
+    res.json({ settings });
+  } catch (err) {
+    console.error('[settings] General save error:', err);
+    res.status(500).json({ error: 'Failed to save general settings' });
+  }
+});
+
 export default router;

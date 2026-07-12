@@ -149,6 +149,23 @@ export async function getTenantDB(tenantId) {
     )
   `);
 
+  // ── settings_general ──────────────────────────────────────────────────────────
+  // Company profile for proposals.
+  await db.run(`
+    CREATE TABLE IF NOT EXISTS settings_general (
+      id              INTEGER PRIMARY KEY CHECK (id = 1),
+      company_name    TEXT,
+      company_email   TEXT,
+      company_phone   TEXT,
+      company_address TEXT,
+      currency        TEXT DEFAULT 'EUR',
+      primary_color   TEXT DEFAULT '#3B82F6',
+      logo_url        TEXT,
+      created_at      DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at      DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
   // ── inline migrations for pre-existing databases ────────────────────────────
   // Silences only "duplicate column" errors; all other ALTER failures are re-thrown.
   const safeAlter = async (sql) => {
