@@ -68,7 +68,8 @@ useEffect(() => {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Action failed');
-      setActionMsg(`${action === 'accept' ? 'Accepted' : 'Denied'} successfully.`);
+      const isAccept = action === 'accept';
+      setActionMsg({ text: isAccept ? 'Accepted successfully.' : 'Denied.', accept: isAccept });
       setProposal(prev => ({ ...prev, status: action === 'accept' ? 'Accepted' : 'Denied' }));
     } catch (err) {
       setError(err.message);
@@ -194,7 +195,11 @@ useEffect(() => {
         <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">
           Administrative Actions
         </p>
-        {actionMsg && <p className="text-green-600 dark:text-green-400 text-sm mb-3">{actionMsg}</p>}
+        {actionMsg && (
+          <p className={`text-sm mb-3 ${actionMsg.accept ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+            {actionMsg.text}
+          </p>
+        )}
         <div className="flex gap-3">
           {(proposal.status === 'Draft' || proposal.status === 'Revision Requested') && (
             <button
@@ -219,9 +224,9 @@ useEffect(() => {
         </div>
       </div>
 
-      {actionMsg && (
-        <p className="text-xs text-slate-400 dark:text-slate-500 text-center">Ref #{proposal.hash_token?.slice(0, 8).toUpperCase()}</p>
-      )}
+{actionMsg?.text && (
+         <p className="text-xs text-slate-400 dark:text-slate-500 text-center">Ref #{proposal.hash_token?.slice(0, 8).toUpperCase()}</p>
+       )}
     </div>
   );
 }
