@@ -35,7 +35,7 @@ export default function ProposalAdmin() {
   const [proposal, setProposal] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [actionMsg, setActionMsg] = useState('');
+  const [actionMsg, setActionMsg] = useState(null);
 
 useEffect(() => {
     if (!token) {
@@ -225,8 +225,8 @@ useEffect(() => {
       </div>
 
 {actionMsg?.text && (
-         <p className="text-xs text-slate-400 dark:text-slate-500 text-center">Ref #{proposal.hash_token?.slice(0, 8).toUpperCase()}</p>
-       )}
+        <p className="text-xs text-slate-400 dark:text-slate-500 text-center">Ref #{proposal.hash_token?.slice(0, 8).toUpperCase()}</p>
+      )}
     </div>
   );
 }
