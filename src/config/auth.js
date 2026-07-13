@@ -1,10 +1,14 @@
-import bcrypt from 'bcryptjs';
+﻿import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-this';
+if (!process.env.JWT_SECRET) {
+  throw new Error('CRITICAL: JWT_SECRET environment variable is missing!');
+}
+
+const JWT_SECRET = process.env.JWT_SECRET;
 const SALT_ROUNDS = parseInt(process.env.SALT_ROUNDS || '10', 10);
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1d';
 
@@ -17,15 +21,6 @@ export async function verifyPassword(password, hash) {
 }
 
 export function generateToken(payload) {
-  // Fetch token_version if user_id exists in payload
-  if (payload?.user_id) {
-    // We need to get the DB, but this may be called before DB init
-    // Return without token_version if DB not ready (will be checked on each request)
-  }
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
-}
-
-export function generateToken(payload) {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 }
 
@@ -33,6 +28,7 @@ export function verifyToken(token) {
   try {
     return jwt.verify(token, JWT_SECRET);
   } catch (err) {
+    console.warn('[auth] Token verification failed - invalid or expired token:', err.message);
     return null;
   }
 }
